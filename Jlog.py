@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template, request, json
 from flask_restful import Resource, Api, reqparse
 from datetime import datetime
 import Models as m
@@ -91,7 +91,17 @@ class DeletePost(Resource):
         post = m.Post.select().where(m.Post.id == id).get()
         post.delete_instance()
         return {200:'Post deleted'}
+        
+@app.route('/')
+def index():
+    return render_template('index.html')
 
+@app.route('/', methods=['POST'])
+def addPost():
+    author =  request.form['author'];
+    post = request.form['post'];
+    return json.dumps({'status':'OK','author':author,'post':post});
+    
 api.add_resource(SubmitPost,'/submit')
 api.add_resource(ShowPosts,'/show/', '/show')
 api.add_resource(ShowPost,'/show/<int:id>')
